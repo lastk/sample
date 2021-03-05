@@ -3,16 +3,24 @@
 class UrlsController < ApiController
   def create
     url = CreateUrlService.new.call(params[:address])
-    render json: url.to_json, status: 201
+    render_json(url, status = 201)
   end
 
   def show
     url = Url.find_by(shortened_address: params[:id])
     IncreaseVisitUrlService.new(url).call
-    render json: url.to_json
+    render_json(url)
+  end
+
+  def top_100
+    render_json(Url.top_100)
   end
 
   private
+
+  def render_json(obj, status = 200, fields = %i[count address shortened_address])
+    render json: obj.to_json(only: fields), status: status
+  end
 
   def url_params
     params.permit(:address)

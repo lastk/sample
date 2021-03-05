@@ -24,4 +24,14 @@ class UrlControllerTest < ActionDispatch::IntegrationTest
     url.reload
     assert_equal url.count, 3
   end
+
+  test 'top_100' do
+    200.times do |i|
+      Url.create!(address: "http:://www.google#{i}.com", count: rand(1..1000))
+    end
+
+    get urls_top_100_path
+
+    assert_equal response.parsed_body.count, 100
+  end
 end
